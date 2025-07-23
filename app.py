@@ -1,4 +1,20 @@
 import streamlit as st
+import subprocess
+import importlib.util
+
+# Ensure spaCy model is downloaded before importing your own utils
+def ensure_spacy_model():
+    import spacy
+    try:
+        spacy.load("en_core_web_sm")
+    except OSError:
+        subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+        spacy.load("en_core_web_sm")
+
+ensure_spacy_model()
+
+from utils import process_text, read_file
+
 from utils import process_text, read_file
 
 def main():
