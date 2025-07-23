@@ -3,5 +3,5 @@ pandas
 numpy
 scikit-learn
 nltk
-gensim
 spacy==3.6.1
+gensim==4.2.0
