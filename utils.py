@@ -2,6 +2,18 @@ import logging
 from preprocessing import clean_text
 from task_identification import extract_tasks
 from categorization import categorize_tasks
+import spacy
+import subprocess
+import importlib
+
+# Ensure spaCy model is available
+try:
+    nlp = spacy.load("en_core_web_sm")
+except:
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+    importlib.invalidate_caches()
+    nlp = spacy.load("en_core_web_sm")
+
 
 def process_text(raw_text):
     """
