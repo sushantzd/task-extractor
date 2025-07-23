@@ -5,13 +5,12 @@ from categorization import categorize_tasks
 import spacy
 import subprocess
 import importlib
+import importlib.util
 
-# Ensure spaCy model is available
 try:
     nlp = spacy.load("en_core_web_sm")
 except:
     subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
-    importlib.invalidate_caches()
     nlp = spacy.load("en_core_web_sm")
 
 
