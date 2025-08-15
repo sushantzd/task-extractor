@@ -1,17 +1,21 @@
 import logging
-from preprocessing import clean_text
+import spacy
 from task_identification import extract_tasks
 from categorization import categorize_tasks
-import spacy
-import subprocess
-import importlib
-import importlib.util
 
-try:
-    nlp = spacy.load("en_core_web_sm")
-except:
-    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
-    nlp = spacy.load("en_core_web_sm")
+_nlp = None
+
+def get_nlp():
+    """Load spaCy model lazily and download if missing."""
+    global _nlp
+    if _nlp is None:
+        try:
+            _nlp = spacy.load("en_core_web_sm")
+        except OSError:
+            from spacy.cli import download
+            download("en_core_web_sm")
+            _nlp = spacy.load("en_core_web_sm")
+    return _nlp
 
 
 def process_text(raw_text):
@@ -38,10 +42,9 @@ def process_text(raw_text):
         logging.error(f"Error processing text: {e}")
         return [], []
 
+
 def read_file(uploaded_file):
-    """
-    Reads an uploaded file and returns its content as a string.
-    """
+    """Reads an uploaded file and returns its content as a string."""
     try:
         file_bytes = uploaded_file.read()
         return file_bytes.decode("utf-8", errors="ignore")
