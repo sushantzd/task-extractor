@@ -1,26 +1,12 @@
 import re
 import nltk
-import spacy
 from preprocessing import tokenize_sentences, clean_text
-
-import spacy
-nlp = None  # will be set later
-
-def get_nlp():
-    global nlp
-    if nlp is None:
-        try:
-            nlp = spacy.load("en_core_web_sm")
-        except OSError:
-            from spacy.cli import download
-            download("en_core_web_sm")
-            nlp = spacy.load("en_core_web_sm")
-    return nlp
-
+from utils import get_nlp
 
 TASK_KEYWORDS = ["has to", "should", "must", "needs to", "is required to"]
 
 def extract_person(sentence):
+    """Extract the responsible person using Named Entity Recognition (NER)."""
     doc = get_nlp()(sentence)
     for ent in doc.ents:
         if ent.label_ == "PERSON":
@@ -29,17 +15,14 @@ def extract_person(sentence):
 
 
 def extract_deadline(sentence):
-    """
-    Extract deadline information using regex.
-    """
+    """Extract deadline information using regex."""
     deadline_pattern = r'\b(?:by|before|at)\s+((?:\d{1,2}\s*(?:am|pm))|tomorrow|today|next\s+\w+day|end of day)'
     match = re.search(deadline_pattern, sentence, re.IGNORECASE)
     return match.group(1) if match else "Not Specified"
 
+
 def extract_tasks(raw_text):
-    """
-    Process raw input text to extract actionable tasks.
-    """
+    """Process raw input text to extract actionable tasks."""
     sentences = tokenize_sentences(raw_text)
     tasks = []
     
