@@ -20,13 +20,29 @@ def get_nlp():
 
 TASK_KEYWORDS = ["has to", "should", "must", "needs to", "is required to"]
 
+import re
+import nltk
+from nltk import pos_tag, word_tokenize
+
 def extract_person(sentence):
-    """Extract the responsible person using Named Entity Recognition (NER)."""
     doc = get_nlp()(sentence)
+    ignore_words = {"purchase", "buy", "shop", "order", "clean", "finish", "complete"}
+
+    # 1. Try spaCy NER first
     for ent in doc.ents:
         if ent.label_ == "PERSON":
-            return ent.text
+            if not any(word.lower() in ignore_words for word in ent.text.split()):
+                return ent.text
+
+    # 2. Fallback: check for proper nouns (NNP) with NLTK
+    tokens = word_tokenize(sentence)
+    tagged = pos_tag(tokens)
+    for word, tag in tagged:
+        if tag == "NNP" and word.lower() not in ignore_words:
+            return word
+
     return "Not Specified"
+
 
 def extract_deadline(sentence):
     """Extract deadline information using regex."""
