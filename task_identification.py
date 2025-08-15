@@ -3,7 +3,20 @@ import nltk
 import spacy
 from preprocessing import tokenize_sentences, clean_text
 
-nlp = spacy.load("en_core_web_sm")
+import spacy
+nlp = None  # will be set later
+
+def get_nlp():
+    global nlp
+    if nlp is None:
+        try:
+            nlp = spacy.load("en_core_web_sm")
+        except OSError:
+            from spacy.cli import download
+            download("en_core_web_sm")
+            nlp = spacy.load("en_core_web_sm")
+    return nlp
+
 
 TASK_KEYWORDS = ["has to", "should", "must", "needs to", "is required to"]
 
