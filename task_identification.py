@@ -21,14 +21,12 @@ def get_nlp():
 TASK_KEYWORDS = ["has to", "should", "must", "needs to", "is required to"]
 
 def extract_person(sentence):
-    """
-    Extract the responsible person using Named Entity Recognition (NER).
-    """
-    doc = nlp(sentence)
+    doc = get_nlp()(sentence)
     for ent in doc.ents:
         if ent.label_ == "PERSON":
             return ent.text
     return "Not Specified"
+
 
 def extract_deadline(sentence):
     """
